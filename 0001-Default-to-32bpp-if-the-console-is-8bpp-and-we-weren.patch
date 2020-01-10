@@ -1,0 +1,63 @@
+From dd1cf1028c3f0de77d075c4a169011518baab0f4 Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Fri, 21 Mar 2014 12:20:01 -0400
+Subject: [PATCH] Default to 32bpp if the console is 8bpp (and we weren't told
+ otherwise)
+
+You can still override this on the command line or in the config file.
+Without this we'll come up at 8bpp on matroxfb (and probably others),
+which among other things breaks the default desktop since gnome-shell
+wants GLX and GLX doesn't support pseudocolor anymore.
+
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+---
+ src/fbdev.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/src/fbdev.c b/src/fbdev.c
+index f5a7378..a73565f 100644
+--- a/src/fbdev.c
++++ b/src/fbdev.c
+@@ -38,6 +38,9 @@
+ #include <pciaccess.h>
+ #endif
+ 
++/* for xf86{Depth,FbBpp}. i am a terrible person, and i am sorry. */
++#include "xf86Priv.h"
++
+ static Bool debug = 0;
+ 
+ #define TRACE_ENTER(str) \
+@@ -427,6 +430,29 @@ FBDevPreInit(ScrnInfoPtr pScrn, int flags)
+ 	if (!fbdevHWInit(pScrn,NULL,xf86FindOptionValue(fPtr->pEnt->device->options,"fbdev")))
+ 		return FALSE;
+ 	default_depth = fbdevHWGetDepth(pScrn,&fbbpp);
++
++	if (default_depth == 8) do {
++	    /* trust the command line */
++	    if (xf86FbBpp > 0 || xf86Depth > 0)
++		break;
++
++	    /* trust the config file's Screen stanza */
++	    if (pScrn->confScreen->defaultfbbpp > 0 ||
++		pScrn->confScreen->defaultdepth > 0)
++		break;
++
++	    /* trust our Device stanza in the config file */
++	    if (xf86FindOption(fPtr->pEnt->device->options, "DefaultDepth") ||
++		xf86FindOption(fPtr->pEnt->device->options, "DefaultFbBpp"))
++		break;
++
++	    /* otherwise, lol no */
++	    xf86DrvMsg(pScrn->scrnIndex, X_INFO,
++		       "Console is 8bpp, defaulting to 32bpp\n");
++	    default_depth = 24;
++	    fbbpp = 32;
++	} while (0);
++
+ 	if (!xf86SetDepthBpp(pScrn, default_depth, default_depth, fbbpp,
+ 			     Support24bppFb | Support32bppFb | SupportConvert32to24 | SupportConvert24to32))
+ 		return FALSE;
+-- 
+1.8.5.3
+

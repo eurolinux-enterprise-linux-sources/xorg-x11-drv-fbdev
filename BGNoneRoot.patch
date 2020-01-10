@@ -1,13 +1,12 @@
-diff --git a/src/fbdev.c b/src/fbdev.c
-index c97ce1c..9c2dcef 100644
---- a/src/fbdev.c
-+++ b/src/fbdev.c
-@@ -620,6 +620,8 @@ FBDevCreateScreenResources(ScreenPtr pScreen)
-     if (!ret)
- 	return FALSE;
+diff -up xf86-video-fbdev-0.4.3/src/fbdev.c.dma xf86-video-fbdev-0.4.3/src/fbdev.c
+--- xf86-video-fbdev-0.4.3/src/fbdev.c.dma	2012-07-02 12:46:46.000000000 +0100
++++ xf86-video-fbdev-0.4.3/src/fbdev.c	2012-07-02 13:02:40.545956779 +0100
+@@ -673,6 +673,8 @@ FBDevScreenInit(SCREEN_INIT_ARGS_DECL)
+ 	       pScrn->offset.red,pScrn->offset.green,pScrn->offset.blue);
+ #endif
  
-+    pScreen->canDoBGNoneRoot = TRUE;
++	pScreen->canDoBGNoneRoot = 1;
 +
-     pPixmap = pScreen->GetScreenPixmap(pScreen);
- 
-     if (!shadowAdd(pScreen, pPixmap, fPtr->rotate ?
+ 	if (NULL == (fPtr->fbmem = fbdevHWMapVidmem(pScrn))) {
+ 	        xf86DrvMsg(pScrn->scrnIndex,X_ERROR,"mapping of video memory"
+ 			   " failed\n");

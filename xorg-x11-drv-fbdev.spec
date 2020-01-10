@@ -5,35 +5,38 @@
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.3
-Release:   2%{?dist}
+Release:   16%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Source0:   ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 
 ExcludeArch: s390 s390x
 
-Patch1: fbdev-0.3.0-32fbbpp.patch
+Patch0: 0001-Remove-mibstore.h.patch
 Patch2: BGNoneRoot.patch
+Patch3: 0001-Default-to-32bpp-if-the-console-is-8bpp-and-we-weren.patch
+Patch4: 0001-Pass-the-pci-device-if-any-through-to-fbdevhw-in-pro.patch
 
-BuildRequires: xorg-x11-server-sdk >= 1.4.99.1
+BuildRequires: xorg-x11-server-devel >= 1.10.99.902
+BuildRequires: autoconf automake libtool
 
-Requires:  Xorg %(xserver-sdk-abi-requires ansic)
-Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 fbdev video driver.
 
 %prep
 %setup -q -n %{tarball}-%{version}
-# Not sure if this is still necessary, it doesn't apply anymore and the new
-# code looks like it'll have the same effect.  XXX check with katzj.
-# %patch1 -p1 -b .fbbpp
+%patch0 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
+autoreconf -vif
 %configure --disable-static
 make
 
@@ -55,20 +58,104 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/fbdev.4*
 
 %changelog
-* Wed Aug 22 2012 airlied@redhat.com - 0.4.3-2
-- rebuild for server ABI requires
+* Mon Aug 11 2014 Adam Jackson <ajax@redhat.com> 0.4.3-16
+- Pass the pci device being probed through to fbdevHWProbe
 
-* Mon Aug 06 2012 Dave Airlie <airlied@redhat.com> 0.4.3-1
-- upstream release 0.4.3 for rebase
+* Fri Mar 21 2014 Adam Jackson <ajax@redhat.com> 0.4.3-15
+- Default to 32bpp when the console is only 8bpp (#1055533)
 
-* Tue Jun 28 2011 Ben Skeggs <bskeggs@redhat.com> - 0.4.2-2
-- rebuild for 6.2 server rebase
+* Wed Jan 15 2014 Adam Jackson <ajax@redhat.com> - 0.4.3-14
+- 1.15 ABI rebuild
 
-* Tue Jun 29 2010 Adam Jackson <ajax@redhat.com> 0.4.2-1
-- fbdev 0.4.2 (#597291)
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 0.4.3-13
+- Mass rebuild 2013-12-27
 
-* Mon Nov 30 2009 Dennis Gregorovic <dgregor@redhat.com> - 0.4.1-1.1
-- Rebuilt for RHEL 6
+* Wed Nov 06 2013 Adam Jackson <ajax@redhat.com> - 0.4.3-12
+- 1.15RC1 ABI rebuild
+
+* Fri Oct 25 2013 Adam Jackson <ajax@redhat.com> - 0.4.3-11
+- ABI rebuild
+
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.4.3-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
+* Thu Mar 07 2013 Dave Airlie <airlied@redhat.com> 0.4.3-9
+- autoreconf for aarch64
+
+* Thu Mar 07 2013 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.3-8
+- require xorg-x11-server-devel, not -sdk
+
+* Thu Mar 07 2013 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.3-7
+- ABI rebuild
+
+* Fri Feb 15 2013 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.3-6
+- ABI rebuild
+
+* Fri Feb 15 2013 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.3-5
+- ABI rebuild
+
+* Thu Jan 10 2013 Adam Jackson <ajax@redhat.com> - 0.4.3-4
+- ABI rebuild
+
+* Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.4.3-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Wed Jul 18 2012 Dave Airlie <airlied@redhat.com> - 0.4.3-2
+- ABI rebuild
+
+* Mon Jul 02 2012 Dave Airlie <airlied@redhat.com> 0.4.3-1
+- upstream 0.4.3 release
+
+* Thu Apr 05 2012 Adam Jackson <ajax@redhat.com> - 0.4.2-9
+- RHEL arch exclude updates
+
+* Sat Feb 11 2012 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.2-8
+- ABI rebuild
+
+* Fri Feb 10 2012 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.2-7
+- ABI rebuild
+
+* Tue Jan 24 2012 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.2-6
+- ABI rebuild
+
+* Wed Jan 04 2012 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.2-5
+- Rebuild for server 1.12
+
+* Mon Nov 14 2011 Adam Jackson <ajax@redhat.com> - 0.4.2-4
+- ABI rebuild
+
+* Wed Nov 09 2011 ajax <ajax@redhat.com> - 0.4.2-3
+- ABI rebuild
+
+* Thu Aug 18 2011 Adam Jackson <ajax@redhat.com> - 0.4.2-2
+- Rebuild for xserver 1.11 ABI
+
+* Tue Jun 21 2011 Adam Jackson <ajax@redhat.com> 0.4.2-1
+- fbdev 0.4.2
+
+* Wed May 11 2011 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.1-9
+- Rebuild for server 1.11
+
+* Tue Mar 01 2011 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.1-8
+- Rebuild for server 1.10
+
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.4.1-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Thu Dec 02 2010 Dave Airlie <airlied@redhat.com> 0.4.1-6
+- fix bg none root
+
+* Wed Oct 27 2010 Adam Jackson <ajax@redhat.com> 0.4.1-5
+- Add ABI requires magic. (#542742)
+
+* Mon Jul 05 2010 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.1-4
+- rebuild for X Server 1.9
+
+* Thu Jan 21 2010 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.1-3
+- Rebuild for server 1.8
+
+* Thu Jan 21 2010 Peter Hutterer <peter.hutterer@redhat.com> - 0.4.1-2
+- Rebuild for server 1.8
 
 * Tue Aug 04 2009 Dave Airlie <airlied@redhat.com> 0.4.1-1
 - fbdev 0.4.1

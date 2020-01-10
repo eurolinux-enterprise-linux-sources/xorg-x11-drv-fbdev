@@ -5,7 +5,7 @@
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.3
-Release:   16%{?dist}
+Release:   17%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/fbdev.4*
 
 %changelog
+* Wed Nov 11 2015 Adam Jackson <ajax@redhat.com> - 0.4.3-17
+- Rebuild for server 1.17
+
 * Mon Aug 11 2014 Adam Jackson <ajax@redhat.com> 0.4.3-16
 - Pass the pci device being probed through to fbdevHWProbe
 

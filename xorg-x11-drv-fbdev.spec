@@ -5,7 +5,7 @@
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.2
-Release:   1%{?dist}
+Release:   2%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -20,7 +20,8 @@ Patch2: BGNoneRoot.patch
 
 BuildRequires: xorg-x11-server-sdk >= 1.4.99.1
 
-Requires:  xorg-x11-server-Xorg >= 1.4.99.1
+Requires:  Xorg %(xserver-sdk-abi-requires ansic)
+Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 fbdev video driver.
@@ -54,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/fbdev.4*
 
 %changelog
+* Tue Jun 28 2011 Ben Skeggs <bskeggs@redhat.com> - 0.4.2-2
+- rebuild for 6.2 server rebase
+
 * Tue Jun 29 2010 Adam Jackson <ajax@redhat.com> 0.4.2-1
 - fbdev 0.4.2 (#597291)
 

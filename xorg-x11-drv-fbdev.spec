@@ -5,7 +5,7 @@
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.3
-Release:   12%{?dist}
+Release:   15%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -16,6 +16,7 @@ ExcludeArch: s390 s390x
 
 Patch0: 0001-Remove-mibstore.h.patch
 Patch2: BGNoneRoot.patch
+Patch3: 0001-Default-to-32bpp-if-the-console-is-8bpp-and-we-weren.patch
 
 BuildRequires: xorg-x11-server-devel >= 1.10.99.902
 BuildRequires: autoconf automake libtool
@@ -30,6 +31,7 @@ X.Org X11 fbdev video driver.
 %setup -q -n %{tarball}-%{version}
 %patch0 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 autoreconf -vif
@@ -54,6 +56,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/fbdev.4*
 
 %changelog
+* Fri Mar 21 2014 Adam Jackson <ajax@redhat.com> 0.4.3-15
+- Default to 32bpp when the console is only 8bpp (#1055533)
+
+* Wed Jan 15 2014 Adam Jackson <ajax@redhat.com> - 0.4.3-14
+- 1.15 ABI rebuild
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 0.4.3-13
+- Mass rebuild 2013-12-27
+
 * Wed Nov 06 2013 Adam Jackson <ajax@redhat.com> - 0.4.3-12
 - 1.15RC1 ABI rebuild
 

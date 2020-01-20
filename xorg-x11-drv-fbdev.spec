@@ -1,11 +1,13 @@
-%define tarball xf86-video-fbdev
-%define moduledir %(pkg-config xorg-server --variable=moduledir )
-%define driverdir	%{moduledir}/drivers
+%global tarball xf86-video-fbdev
+%global moduledir %(pkg-config xorg-server --variable=moduledir )
+%global driverdir	%{moduledir}/drivers
+
+%undefine _hardened_build
 
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.3
-Release:   20%{?dist}
+Release:   25%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -51,11 +53,31 @@ find $RPM_BUILD_ROOT -regex ".*\.la$" | xargs rm -f --
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root,-)
 %{driverdir}/fbdev_drv.so
 %{_mandir}/man4/fbdev.4*
 
 %changelog
+* Thu Sep 29 2016 Hans de Goede <hdegoede@redhat.com> - 0.4.3-25
+- Rebuild against xserver-1.19
+
+* Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.4.3-24
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Thu Jan 28 2016 Peter Hutterer <peter.hutterer@redhat.com>
+- Remove unnecessary defattr
+
+* Wed Jan 20 2016 Peter Hutterer <peter.hutterer@redhat.com>
+- s/define/global/
+
+* Wed Jul 29 2015 Dave Airlie <airlied@redhat.com> - 0.4.3-23
+- 1.15 ABI rebuild
+
+* Tue Jun 23 2015 Adam Jackson <ajax@redhat.com> - 0.4.3-22
+- Undefine _hardened_build
+
+* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.4.3-21
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Wed Feb 11 2015 Hans de Goede <hdegoede@redhat.com> - 0.4.3-20
 - xserver 1.17 ABI rebuild
 
